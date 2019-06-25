@@ -1,0 +1,13 @@
+{
+  "success":true,
+  "timestamp":1561480744,
+  "base":"EUR",
+  "date":"2019-06-25",
+  "rates":{
+    "Aaaaaaaaaaaa":4.177581,
+    "USD":1.137314,
+    "monopoly":40.05607,
+    "GBP":9739.441344,
+    "Funny money":11.358921
+  }
+}
