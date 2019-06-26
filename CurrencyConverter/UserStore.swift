@@ -1,7 +1,10 @@
 import SwiftUI
 import Combine
 
-class  UserStore : BindableObject {
+
+final class Resource<A:Decodable>: BindableObject {
+    let didChange = PassthroughSubject<A?, Never>()
+    let url: String
     
     enum loadStatus {
         case pending
@@ -9,23 +12,28 @@ class  UserStore : BindableObject {
         case available
     }
     
-    let didChange = PassthroughSubject<UserStore, Never>()
-    
-    var info =  FixerData.pendingRate(){
-        didSet {
-            didChange.send(self)
-        }
-    }
-    
     var status:loadStatus = .pending {
         didSet {
-            didChange.send(self)
+            didChange.send(self.value)
         }
     }
     
-    func loadFromServer(){
-        
-        guard let url = URL(string:  "http://data.fixer.io/api/latest?access_key=dd7e92eca8f55f5d102f6802921ffa72&format=1")else {
+    var value: A? {
+        didSet {
+            sleep(2)
+            DispatchQueue.main.async {
+                self.didChange.send(self.value)
+            }
+        }
+    }
+    
+    init(url: String) {
+        self.url = url
+        reload()
+    }
+
+    func reload() {
+        guard let url = URL(string: url )else {
             print("Bad url")
             return
         }
@@ -34,7 +42,7 @@ class  UserStore : BindableObject {
             .map({ (inputTuple) -> Data in
                 return inputTuple.data
             })
-            .decode(type: FixerData.self, decoder: JSONDecoder())
+            .decode(type: A.self, decoder: JSONDecoder())
             .receive(on: RunLoop.main)
             .sink(receiveCompletion: {x in
                 switch x{
@@ -44,11 +52,9 @@ class  UserStore : BindableObject {
                     self.status = .available
                 }
             } , receiveValue:{ receivedValue in
-                    self.info = receivedValue
+                self.value = receivedValue
             })
-        
     }
-    
 }
 
 

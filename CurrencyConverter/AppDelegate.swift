@@ -17,11 +17,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         window.center()
         window.setFrameAutosaveName("Main Window")
         
-        let store = UserStore()
+ 
         
-        window.contentView = NSHostingView(rootView: ContentView(uData:store))
+        window.contentView = NSHostingView(rootView: ContentView())
         
-        store.loadFromServer()
+      
         
         window.makeKeyAndOrderFront(nil)
         

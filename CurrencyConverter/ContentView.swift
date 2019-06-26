@@ -66,35 +66,40 @@ struct ProgressIndicator: NSViewRepresentable {
 
 struct ContentView : View {
     
-    @ObjectBinding var uData:UserStore
+    @ObjectBinding var resource = Resource<FixerData>(url: "http://data.fixer.io/api/latest?access_key=dd7e92eca8f55f5d102f6802921ffa72&format=1")
     
     var body: some View {
-        Group {
-            
-            if uData.status == .pending {
+        
+        let r = self.resource.value?.rates ?? [:]
+        
+        return Group {
+           
+ 
+            if resource.status == .pending {
                 VStack {
                     Text("Loading...")
                     ProgressIndicator()
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 
-            } else if uData.status == .unavailable {
+            } else if resource.status == .unavailable {
                 VStack {
                     Text("Could not find rates")
                     HStack{
                         Button(action: {
-                            self.uData.loadFromServer()
+                            self.resource.reload()
                         }){ Text("Refresh") }
                         Button(action: {
-                            self.uData.info = rateData
-                            self.uData.status = .available
+                            self.resource.value = rateData
+                            self.resource.status = .available
                         }){ Text("Use Stale") }
                     }
                     }.frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
-                Converter(rates:uData.info.rates)
+
+                Converter(rates:r)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-            }
+           }
             
         }
         
