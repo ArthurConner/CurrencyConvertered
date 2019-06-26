@@ -11,7 +11,7 @@ class  UserStore : BindableObject {
     
     let didChange = PassthroughSubject<UserStore, Never>()
     
-    var info =  RateInfo.pendingRate(){
+    var info =  FixerData.pendingRate(){
         didSet {
             didChange.send(self)
         }
@@ -34,7 +34,7 @@ class  UserStore : BindableObject {
             .map({ (inputTuple) -> Data in
                 return inputTuple.data
             })
-            .decode(type: RateInfo.self, decoder: JSONDecoder())
+            .decode(type: FixerData.self, decoder: JSONDecoder())
             .receive(on: RunLoop.main)
             .sink(receiveCompletion: {x in
                 switch x{

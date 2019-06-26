@@ -1,21 +1,17 @@
 import SwiftUI
 import Combine
 
-struct RateInfo :Codable{
-    let success:Bool
-    let timestamp:Int
-    let base:String
-    let date:String
+struct FixerData :Codable{
     let rates:[String:Double]
     
-    static func pendingRate() -> RateInfo{
-        RateInfo(success: false, timestamp: -1, base: "", date: "empty", rates: [:])
+    static func pendingRate() -> FixerData{
+        FixerData( rates: [:])
     }
     
 }
 
 
-let rateData:RateInfo = load("rates.json")
+let rateData:FixerData = load("rates.json")
 
 func load<T: Decodable>(_ filename: String, as type: T.Type = T.self) -> T {
     let data: Data
