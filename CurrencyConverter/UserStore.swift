@@ -11,7 +11,7 @@ class  UserStore : BindableObject {
     
     let didChange = PassthroughSubject<UserStore, Never>()
     
-    var info =  RateInfo.pendingRate(){// rateData{ //
+    var info =  RateInfo.pendingRate(){
         didSet {
             didChange.send(self)
         }
@@ -31,24 +31,19 @@ class  UserStore : BindableObject {
         }
         
         let _ = URLSession.shared.dataTaskPublisher(for: url)
-            // the dataTaskPublisher output combination is (data: Data, response: URLResponse)
             .map({ (inputTuple) -> Data in
                 return inputTuple.data
             })
             .decode(type: RateInfo.self, decoder: JSONDecoder())
             .receive(on: RunLoop.main)
-            //.assign(to:\.info,on:self)
             .sink(receiveCompletion: {x in
-                
                 switch x{
                 case .failure:
                     self.status = .unavailable
                 case .finished:
                     self.status = .available
                 }
-                
-            }
-                , receiveValue:{ receivedValue in
+            } , receiveValue:{ receivedValue in
                     self.info = receivedValue
             })
         
