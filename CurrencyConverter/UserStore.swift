@@ -20,7 +20,6 @@ final class Resource<A:Decodable>: BindableObject {
     
     var value: A? {
         didSet {
-            sleep(2)
             DispatchQueue.main.async {
                 self.didChange.send(self.value)
             }
@@ -32,13 +31,15 @@ final class Resource<A:Decodable>: BindableObject {
         reload()
     }
 
+    //var pub:URLSession.DataTaskPublisher?
+    
     func reload() {
         guard let url = URL(string: url )else {
             print("Bad url")
             return
         }
         
-        let _ = URLSession.shared.dataTaskPublisher(for: url)
+      let _ = URLSession.shared.dataTaskPublisher(for: url)
             .map({ (inputTuple) -> Data in
                 return inputTuple.data
             })
@@ -53,7 +54,9 @@ final class Resource<A:Decodable>: BindableObject {
                 }
             } , receiveValue:{ receivedValue in
                 self.value = receivedValue
-            })
+            }).eraseToAnySubscriber()
+        
+        
     }
 }
 
