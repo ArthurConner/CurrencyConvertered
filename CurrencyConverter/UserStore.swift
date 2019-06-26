@@ -35,7 +35,8 @@ final class Resource<A:Decodable>: BindableObject {
     
     func reload() {
         guard let url = URL(string: url )else {
-            print("Bad url")
+            print("Bad url \(self.url)")
+            self.status = .unavailable
             return
         }
         
