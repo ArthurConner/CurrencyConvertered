@@ -6,13 +6,7 @@ import Combine
 final class Resource<A:Decodable>: BindableObject {
     let didChange = PassthroughSubject<A?, Never>()
     let url: String
-    
-    
-    enum downloadErr: Error {
-        case networkIssue
-        case jsonIssue
-    }
-    
+
     enum loadStatus {
         case pending
         case unavailable
@@ -39,10 +33,10 @@ final class Resource<A:Decodable>: BindableObject {
         self.url = url
         reload()
     }
-
+    
     func reload() {
         status = .pending
-     
+        
         
         guard let url = URL(string: url )else {
             print("Bad url \(self.url)")
@@ -51,32 +45,29 @@ final class Resource<A:Decodable>: BindableObject {
         }
         
         
-      let _ = URLSession.shared.dataTaskPublisher(for: url)
+        let _ = URLSession.shared.dataTaskPublisher(for: url)
             .map({ (inputTuple) -> Data in
                 return inputTuple.data
             })
             .decode(type: A.self, decoder: JSONDecoder())
             .receive(on: RunLoop.main)
-            .delay(for: .seconds(3), scheduler: RunLoop.main)
-        .mapError({ _ in
-            return downloadErr.networkIssue
-        }).sink(receiveCompletion: {x in
-            switch x{
-            case .failure:
-                self.status = .unavailable
-            case .finished:
-                self.status = .available
-            }
-        } , receiveValue:{ receivedValue in
-            self.value = receivedValue
-        })
+            .sink(receiveCompletion: {x in
+                switch x{
+                case .failure:
+                    self.status = .unavailable
+                case .finished:
+                    self.status = .available
+                }
+            } , receiveValue:{ receivedValue in
+                self.value = receivedValue
+            })
         
         
         
     }
     
     
-
+    
 }
 
 
