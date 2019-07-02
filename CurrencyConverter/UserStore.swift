@@ -2,9 +2,16 @@ import SwiftUI
 import Combine
 
 
+
 final class Resource<A:Decodable>: BindableObject {
     let didChange = PassthroughSubject<A?, Never>()
     let url: String
+    
+    
+    enum downloadErr: Error {
+        case networkIssue
+        case jsonIssue
+    }
     
     enum loadStatus {
         case pending
@@ -26,19 +33,23 @@ final class Resource<A:Decodable>: BindableObject {
         }
     }
     
+    var pub:AnyCancellable?
+    
     init(url: String) {
         self.url = url
         reload()
     }
 
-    //var pub:URLSession.DataTaskPublisher?
-    
     func reload() {
+        status = .pending
+     
+        
         guard let url = URL(string: url )else {
             print("Bad url \(self.url)")
             self.status = .unavailable
             return
         }
+        
         
       let _ = URLSession.shared.dataTaskPublisher(for: url)
             .map({ (inputTuple) -> Data in
@@ -46,19 +57,26 @@ final class Resource<A:Decodable>: BindableObject {
             })
             .decode(type: A.self, decoder: JSONDecoder())
             .receive(on: RunLoop.main)
-            .sink(receiveCompletion: {x in
-                switch x{
-                case .failure:
-                    self.status = .unavailable
-                case .finished:
-                    self.status = .available
-                }
-            } , receiveValue:{ receivedValue in
-                self.value = receivedValue
-            }).eraseToAnySubscriber()
+            .delay(for: .seconds(3), scheduler: RunLoop.main)
+        .mapError({ _ in
+            return downloadErr.networkIssue
+        }).sink(receiveCompletion: {x in
+            switch x{
+            case .failure:
+                self.status = .unavailable
+            case .finished:
+                self.status = .available
+            }
+        } , receiveValue:{ receivedValue in
+            self.value = receivedValue
+        })
+        
         
         
     }
+    
+    
+
 }
 
 

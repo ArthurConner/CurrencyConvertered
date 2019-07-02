@@ -5,11 +5,18 @@ struct Converter: View {
     
     @State private var text: String = "100"
     @State private var selection: String = "USD"
+    @State private var isForward = true
     
     let rates:[String:Double]
     
     var rate: Double? {
-        rates[selection]
+        guard let r = rates[selection] else { return nil}
+        
+        if isForward  || r == 0 {
+            return r
+        }
+        
+        return 1/r
     }
     
     let formatter: NumberFormatter = {
@@ -31,11 +38,26 @@ struct Converter: View {
     var body: some View {
         VStack{
             HStack {
-                TextField($text).frame(width: 100)
-                Text("EUR")
-                Text("=")
-                Text(output)
-                Text(selection)
+                if isForward {
+                    Spacer()
+                    Toggle(isOn: $isForward){ Text("From")}.frame(width: 100)
+                    TextField($text)
+                    Text("EUR")
+                    Text("=")
+                    Text(output)
+                    Text(selection)
+                    Spacer()
+                } else {
+                    Spacer()
+                    Toggle(isOn: $isForward){ Text("To")}.frame(width: 100)
+                    TextField($text)
+                    Text(selection)
+                    Text("=")
+                    Text(output)
+                    Text("EUR")
+                    Spacer()
+                    
+                }
             }
             HStack {
                 Spacer()
@@ -67,45 +89,49 @@ struct ProgressIndicator: NSViewRepresentable {
 struct ContentView : View {
     
     @ObjectBinding var resource = Resource<FixerData>(url: "http://data.fixer.io/api/latest?access_key=dd7e92eca8f55f5d102f6802921ffa72&format=1")
+
     
-    var body: some View {
+    func topL()-> AnyView {
         
         let r = self.resource.value?.rates ?? [:]
         
+        switch resource.status{
+        case .pending:
+            return AnyView( VStack {
+                ProgressIndicator()
+            })
+        case .unavailable:
+            return  AnyView( VStack {
+                Text("Could not find rates")
+                HStack{
+                    Button(action: {
+                        self.resource.reload()
+                    }){ Text("Refresh") }
+                    Button(action: {
+                        self.resource.value = rateData
+                        self.resource.status = .available
+                    }){ Text("Use Stale") }
+                }
+                })
+            
+            
+        case .available:
+            return  AnyView( VStack {
+                Text("Rates")
+                 Converter(rates:r)
+            })
+        }
+    }
+    
+    var body: some View {
+        
         return Group {
-           
- 
-            if resource.status == .pending {
-                VStack {
-                    Text("Loading...")
-                    ProgressIndicator()
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                
-            } else if resource.status == .unavailable {
-                VStack {
-                    Text("Could not find rates")
-                    HStack{
-                        Button(action: {
-                            self.resource.reload()
-                        }){ Text("Refresh") }
-                        Button(action: {
-                            self.resource.value = rateData
-                            self.resource.status = .available
-                        }){ Text("Use Stale") }
-                    }
-                    }.frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else {
-
-                Converter(rates:r)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-           }
+            topL().frame(width: 480, height: 300)
             
         }
-        
-        
     }
 }
+
 
 
 #if DEBUG
