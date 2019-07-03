@@ -90,43 +90,31 @@ struct ContentView : View {
     
     @ObjectBinding var resource = Resource<FixerData>(url: "http://data.fixer.io/api/latest?access_key=dd7e92eca8f55f5d102f6802921ffa72&format=1")
 
-    
-    func topL()-> AnyView {
-        
-        let r = self.resource.value?.rates ?? [:]
-        
-        switch resource.status{
-        case .pending:
-            return AnyView( VStack {
-                ProgressIndicator()
-            })
-        case .unavailable:
-            return  AnyView( VStack {
-                Text("Could not find rates")
-                HStack{
-                    Button(action: {
-                        self.resource.reload()
-                    }){ Text("Refresh") }
-                    Button(action: {
-                        self.resource.value = rateData
-                        self.resource.status = .available
-                    }){ Text("Use Stale") }
-                }
-                })
-            
-            
-        case .available:
-            return  AnyView( VStack {
-                Text("Rates")
-                 Converter(rates:r)
-            })
-        }
-    }
-    
     var body: some View {
+         let r = self.resource.value?.rates ?? [:]
         
         return Group {
-            topL().frame(width: 480, height: 300)
+            BaseView(resource: resource,
+                     progress: AnyView( VStack {
+                        ProgressIndicator()
+                     }),
+                     unavailable: AnyView( VStack {
+                        Text("Could not find rates")
+                        HStack{
+                            Button(action: {
+                                self.resource.reload()
+                            }){ Text("Refresh") }
+                            Button(action: {
+                                self.resource.value = rateData
+                                self.resource.status = .available
+                            }){ Text("Use Stale") }
+                        }
+                     }),
+                     available: AnyView( VStack {
+                        Text("Rates")
+                        Converter(rates:r)
+                     })
+            ).frame(width: 480, height: 300)
             
         }
     }

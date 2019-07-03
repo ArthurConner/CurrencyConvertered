@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		4A76BC5D22C2E94900161910 /* rates.json in Resources */ = {isa = PBXBuildFile; fileRef = 4A76BC5C22C2E94900161910 /* rates.json */; };
 		4A76BC5F22C2E9F100161910 /* UserStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A76BC5E22C2E9F100161910 /* UserStore.swift */; };
+		4A7C5EBC22CC1D4000DAE564 /* BaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7C5EBB22CC1D4000DAE564 /* BaseView.swift */; };
 		4ABFC19822C294110019FECC /* Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ABFC19722C294110019FECC /* Data.swift */; };
 		837F5F1322B241E20036EA54 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 837F5F1222B241E20036EA54 /* AppDelegate.swift */; };
 		837F5F1522B241E20036EA54 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 837F5F1422B241E20036EA54 /* ContentView.swift */; };
@@ -20,6 +21,7 @@
 /* Begin PBXFileReference section */
 		4A76BC5C22C2E94900161910 /* rates.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = rates.json; sourceTree = "<group>"; };
 		4A76BC5E22C2E9F100161910 /* UserStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserStore.swift; sourceTree = "<group>"; };
+		4A7C5EBB22CC1D4000DAE564 /* BaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseView.swift; sourceTree = "<group>"; };
 		4ABFC19722C294110019FECC /* Data.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
 		837F5F0F22B241E20036EA54 /* CurrencyConverter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CurrencyConverter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		837F5F1222B241E20036EA54 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -64,6 +66,7 @@
 				837F5F1222B241E20036EA54 /* AppDelegate.swift */,
 				4ABFC19722C294110019FECC /* Data.swift */,
 				4A76BC5E22C2E9F100161910 /* UserStore.swift */,
+				4A7C5EBB22CC1D4000DAE564 /* BaseView.swift */,
 				837F5F1422B241E20036EA54 /* ContentView.swift */,
 				837F5F1622B241E30036EA54 /* Assets.xcassets */,
 				837F5F1B22B241E30036EA54 /* Main.storyboard */,
@@ -161,6 +164,7 @@
 			files = (
 				837F5F1522B241E20036EA54 /* ContentView.swift in Sources */,
 				4ABFC19822C294110019FECC /* Data.swift in Sources */,
+				4A7C5EBC22CC1D4000DAE564 /* BaseView.swift in Sources */,
 				4A76BC5F22C2E9F100161910 /* UserStore.swift in Sources */,
 				837F5F1322B241E20036EA54 /* AppDelegate.swift in Sources */,
 			);
